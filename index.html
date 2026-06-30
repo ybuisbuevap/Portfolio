@@ -83,7 +83,7 @@
   }
   .hero-name {
     font-family: 'Instrument Serif', serif;
-    font-weight: 500;
+    font-style: italic;
     font-size: 96px;
     line-height: 1;
     color: var(--ink);
@@ -303,7 +303,7 @@
 
 <nav>
   <div class="nav-inner">
-    <div class="nav-mark">Portfolio</div>
+    <div class="nav-mark">Devang<span class="cursive" style="color:var(--blue); font-size:22px;"> S.</span></div>
     <div class="nav-links">
       <a href="#about">About</a>
       <a href="#projects">Projects</a>
@@ -525,26 +525,27 @@
         </div>
       </div>
 
-      <form onsubmit="event.preventDefault(); alert('This is a static demo form — wire it up to a backend or a service like Formspree to actually receive messages.');">
+      <form id="contact-form">
         <div class="form-row">
           <div>
             <label for="name">Name</label>
-            <input type="text" id="name" placeholder="Your name" required>
+            <input type="text" id="name" name="from_name" placeholder="Your name" required>
           </div>
           <div>
             <label for="email">Email</label>
-            <input type="email" id="email" placeholder="your@email.com" required>
+            <input type="email" id="email" name="from_email" placeholder="your@email.com" required>
           </div>
         </div>
         <div>
           <label for="subject">Subject</label>
-          <input type="text" id="subject" placeholder="Internship opportunity / collaboration" required>
+          <input type="text" id="subject" name="subject" placeholder="Internship opportunity / collaboration" required>
         </div>
         <div>
           <label for="message">Message</label>
-          <textarea id="message" placeholder="Tell me what you're building..." required></textarea>
+          <textarea id="message" name="message" placeholder="Tell me what you're building..." required></textarea>
         </div>
-        <button type="submit" class="submit-btn">Send message <span class="arrow">→</span></button>
+        <button type="submit" class="submit-btn" id="submit-btn">Send message <span class="arrow">→</span></button>
+        <p id="form-status" style="font-size: 14px; margin-top: 4px; display: none;"></p>
       </form>
     </div>
   </div>
@@ -554,5 +555,41 @@
   Built by <span class="cursive">Devang Singh</span> · 2026
 </footer>
 
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="text/javascript">
+  (function () {
+    emailjs.init({ publicKey: "kVt2914g02TS91zPd" });
+  })();
+
+  const form = document.getElementById("contact-form");
+  const statusEl = document.getElementById("form-status");
+  const submitBtn = document.getElementById("submit-btn");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending...";
+    statusEl.style.display = "none";
+
+    emailjs.sendForm("service_6qbbmka", "template_febmn4f", form)
+      .then(function () {
+        statusEl.textContent = "Message sent — thanks for reaching out, I'll get back to you soon.";
+        statusEl.style.color = "var(--blue)";
+        statusEl.style.display = "block";
+        form.reset();
+      })
+      .catch(function (error) {
+        statusEl.textContent = "Something went wrong sending your message. Please try emailing me directly instead.";
+        statusEl.style.color = "var(--yellow-deep)";
+        statusEl.style.display = "block";
+        console.error("EmailJS error:", error);
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Send message <span class="arrow">→</span>';
+      });
+  });
+</script>
 </body>
 </html>
